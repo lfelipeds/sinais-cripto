@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sinais cripto</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EEEA; --surface:#F7F9F7; --ink:#17262B; --muted:#5E6F72; --line:#CBD5D1;
+  --buy:#13795B; --buy-soft:#D5EBE1; --sell:#B23A48; --sell-soft:#F3DADD; --near:#9A6410; --near-soft:#F1E3C8;
+  --track:#D7DFDB; --focus:#2B6CB0;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1719; --surface:#172226; --ink:#E2EBE7; --muted:#8FA3A3; --line:#26363A;
+  --buy:#3FBF8F; --buy-soft:#15352B; --sell:#F07A86; --sell-soft:#3A1E23; --near:#E0A94A; --near-soft:#3A2D16;
+  --track:#23343A; --focus:#7AA7E0;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1719; --surface:#172226; --ink:#E2EBE7; --muted:#8FA3A3; --line:#26363A;
+  --buy:#3FBF8F; --buy-soft:#15352B; --sell:#F07A86; --sell-soft:#3A1E23; --near:#E0A94A; --near-soft:#3A2D16;
+  --track:#23343A; --focus:#7AA7E0;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Instrument Sans",system-ui,sans-serif;
+  font-variant-numeric:tabular-nums;padding:0 16px 48px}
+main{max-width:720px;margin:0 auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:20px 0 8px}
+header.top h1{font-size:17px;font-weight:600;margin:0;letter-spacing:-.01em}
+.stamp{color:var(--muted);font-size:14px;margin:0}
+.actions{display:flex;gap:8px}
+button,.btn{font:inherit;font-size:15px;font-weight:600;border-radius:999px;padding:8px 16px;cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+button.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button[disabled]{opacity:.6;cursor:progress}
+.spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:r .8s linear infinite;display:none}
+button[disabled] .spin{display:inline-block}
+@keyframes r{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* ---------- núcleo BTC: o elemento principal ---------- */
+.core{padding:28px 0 32px;border-bottom:1px solid var(--line)}
+.core .state{font-size:clamp(44px,12vw,76px);line-height:1;font-weight:700;letter-spacing:-.035em;margin:0}
+.core.in .state{color:var(--buy)} .core.out .state{color:var(--sell)}
+.core .what{margin:10px 0 0;font-size:17px;max-width:56ch}
+.rail{position:relative;height:64px;margin:28px 0 8px}
+.rail .bar{position:absolute;left:0;right:0;top:30px;height:4px;border-radius:2px;background:var(--track)}
+.rail .fill{position:absolute;top:30px;height:4px;border-radius:2px}
+.core.in .rail .fill{background:var(--buy)} .core.out .rail .fill{background:var(--sell)}
+.rail .pin{position:absolute;top:0;transform:translateX(-50%);text-align:center;white-space:nowrap}
+.rail .pin b{display:block;font-size:13px;font-weight:600}
+.rail .pin i{display:block;width:2px;height:22px;margin:6px auto 0;background:var(--ink)}
+.rail .pin.ema i{background:var(--muted);height:16px;margin-top:10px}
+.rail .pin.ema b{color:var(--muted);font-weight:500}
+.rail .pin.btc b{font-size:14px}
+.rail .dot{position:absolute;top:24px;width:16px;height:16px;border-radius:50%;transform:translateX(-50%);border:3px solid var(--surface)}
+.core.in .rail .dot{background:var(--buy)} .core.out .rail .dot{background:var(--sell)}
+.core .legend{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;gap:12px;flex-wrap:wrap}
+
+/* ---------- números ---------- */
+.figures{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:24px 0;border-bottom:1px solid var(--line)}
+.fig p{margin:0;color:var(--muted);font-size:14px}
+.fig strong{display:block;font-size:22px;font-weight:600;letter-spacing:-.01em}
+.fig small{font-size:14px}
+.up{color:var(--buy)} .down{color:var(--sell)}
+@media (max-width:480px){.figures{grid-template-columns:1fr 1fr}.figures .fig:first-child{grid-column:1/-1}}
+svg.spark{display:block;width:100%;height:56px;margin-top:4px}
+
+section{padding:28px 0 8px}
+section h2{font-size:20px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+section .lead{color:var(--muted);margin:0 0 16px;font-size:15px;max-width:60ch}
+
+/* ---------- radar ---------- */
+.radar{list-style:none;margin:0;padding:0}
+.radar li{display:grid;grid-template-columns:64px 1fr 112px;gap:4px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.radar .sym{font-weight:600}
+.radar .meter{height:8px;border-radius:4px;background:var(--track);position:relative;overflow:hidden}
+.radar .meter span{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--muted)}
+.radar li.near .meter span{background:var(--near)}
+.radar li.hit .meter span,.radar li.held .meter span{background:var(--buy)}
+.radar li.off{color:var(--muted)}
+.radar .num{text-align:right;font-weight:600;min-width:84px}
+.radar .note{grid-column:2/-1;color:var(--muted);font-size:14px}
+.tag{display:inline-block;font-size:13px;font-weight:600;border-radius:4px;padding:1px 8px}
+.tag.buy{background:var(--buy-soft);color:var(--buy)} .tag.near{background:var(--near-soft);color:var(--near)}
+.tag.sell{background:var(--sell-soft);color:var(--sell)}
+
+/* ---------- posições ---------- */
+.pos{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:14px 16px;margin-bottom:10px}
+.pos header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pos h3{margin:0;font-size:17px}
+.pos dl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 0}
+.pos dt{color:var(--muted);font-size:13px} .pos dd{margin:0;font-weight:600}
+.empty{color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:16px;margin:0}
+
+/* ---------- linha do tempo ---------- */
+.timeline{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 16px 8px}
+.timeline li::before{content:"";position:absolute;left:-25px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.timeline li.compra::before{background:var(--buy)} .timeline li.venda::before{background:var(--sell)}
+.timeline li.trava::before{background:var(--sell)}
+.timeline time{display:block;color:var(--muted);font-size:13px}
+
+.notice{background:var(--sell-soft);color:var(--sell);border-radius:10px;padding:12px 16px;margin:16px 0 0;font-weight:500}
+.soft{color:var(--muted);font-size:14px}
+footer{color:var(--muted);font-size:14px;padding-top:32px;border-top:1px solid var(--line);margin-top:24px}
+footer p{margin:0 0 8px;max-width:64ch}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1>Sinais cripto</h1>
+      <p class="stamp" id="stamp">Carregando…</p>
+    </div>
+    <div class="actions">
+      <button class="primary" id="refresh" type="button"><span class="spin" aria-hidden="true"></span>Atualizar preços</button>
+      <a class="btn" id="runnow" href="#" target="_blank" rel="noopener">Rodar análise</a>
+    </div>
+  </header>
+  <div id="alert"></div>
+
+  <div class="core" id="core" aria-live="polite">
+    <p class="state" id="coreState">—</p>
+    <p class="what" id="coreWhat"></p>
+    <div class="rail" id="rail" role="img" aria-label=""></div>
+    <div class="legend"><span id="coreSince"></span><span id="coreRule">Vende quando o diário fechar abaixo da EMA200</span></div>
+  </div>
+
+  <div class="figures" id="figures"></div>
+
+  <section>
+    <h2>Radar de rompimentos</h2>
+    <p class="lead">Quanto cada moeda precisa subir para fechar o dia acima da máxima dos últimos 20 dias. Esse fechamento é o sinal de compra.</p>
+    <ul class="radar" id="radar"></ul>
+  </section>
+
+  <section>
+    <h2>Posições abertas</h2>
+    <p class="lead">Carteira simulada. Cada compra de rompimento arrisca 0,5% da parte de trading.</p>
+    <div id="positions"></div>
+  </section>
+
+  <section>
+    <h2>Histórico de sinais</h2>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+
+  <footer>
+    <p><b>Regras.</b> Núcleo BTC: comprado enquanto o diário do BTC fecha acima da média de 200 dias. Rompimento: compra quando a moeda fecha o dia acima da máxima de 20 dias (com ela e o BTC acima da média de 200 dias); stop inicial de 2 ATR; venda quando fechar abaixo da mínima de 10 dias.</p>
+    <p>"Atualizar preços" busca a cotação agora, direto no seu navegador. "Rodar análise" abre o GitHub para você iniciar uma nova análise completa, que leva cerca de 1 minuto. A análise também roda sozinha às 21h11 e a cada 4 horas.</p>
+    <p>Carteira simulada, sem dinheiro real. Não é recomendação de investimento.</p>
+  </footer>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const brl = new Intl.NumberFormat('pt-BR');
+const num = (x, d = 2) => x == null ? '—' : Number(x).toLocaleString('pt-BR', {minimumFractionDigits: d, maximumFractionDigits: d});
+const px = x => x == null ? '—' : Number(x).toLocaleString('pt-BR', {maximumSignificantDigits: x >= 1000 ? 7 : 5});
+const pct = (x, d = 1) => x == null ? '—' : (x > 0 ? '+' : '') + num(x, d) + '%';
+const cls = x => x > 0 ? 'up' : x < 0 ? 'down' : '';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function ago(iso) {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 1) return 'agora';
+  if (m < 60) return `há ${m} min`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `há ${h} h` : `há ${Math.round(h / 24)} dias`;
+}
+const when = iso => new Date(iso).toLocaleString('pt-BR', {day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'});
+
+// link do GitHub Actions a partir do endereço do Pages (usuario.github.io/repo)
+(function () {
+  const owner = location.hostname.split('.')[0];
+  const repo = location.pathname.split('/').filter(Boolean)[0];
+  const a = $('runnow');
+  if (location.hostname.endsWith('github.io') && repo) a.href = `https://github.com/${owner}/${repo}/actions/workflows/sinais.yml`;
+  else a.style.display = 'none';
+})();
+
+let STATE = null, LIVE = {};
+
+async function loadState() {
+  const r = await fetch(`data/estado.json?t=${Date.now()}`, {cache: 'no-store'});
+  if (!r.ok) throw new Error('estado.json não encontrado');
+  STATE = await r.json();
+}
+
+async function loadLive() {
+  // cotação atual direto da API pública da Binance (a Bybit bloqueia chamadas do navegador)
+  const pairs = [...new Set([STATE.core ? 'BTC/USDT' : null, ...STATE.radar.map(r => r.pair), ...STATE.positions.map(p => p.pair)].filter(Boolean))];
+  const syms = JSON.stringify(pairs.map(p => p.replace('/', '')));
+  try {
+    const r = await fetch(`https://data-api.binance.vision/api/v3/ticker/price?symbols=${encodeURIComponent(syms)}`);
+    if (!r.ok) throw 0;
+    const arr = await r.json();
+    LIVE = Object.fromEntries(arr.map(x => [x.symbol.replace(/USDT$/, '/USDT'), parseFloat(x.price)]));
+    LIVE._at = new Date().toISOString();
+  } catch (e) { LIVE = {}; }
+}
+
+const price = pair => LIVE[pair] ?? STATE.prices[pair];
+
+function render() {
+  const s = STATE;
+  const liveTxt = LIVE._at ? `Preços de agora (${new Date(LIVE._at).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}). ` : '';
+  const src = {bybit: 'Bybit', binance: 'Binance', okx: 'OKX'}[s.source] ?? '—';
+  $('stamp').textContent = `${liveTxt}Análise ${ago(s.updated_at)}, preços da ${src}.`;
+
+  // travas / alertas
+  const al = [];
+  if (s.risk?.locked) al.push(`Trava ativa: ${esc(s.risk.locked)}. Compras de rompimento suspensas.`);
+  if (Date.now() - new Date(s.updated_at) > 6 * 3600e3) al.push('A análise não roda há mais de 6 horas. Confira a aba Actions no GitHub.');
+  $('alert').innerHTML = al.map(t => `<p class="notice">${t}</p>`).join('');
+
+  // ---- núcleo BTC ----
+  const c = s.core;
+  if (c) {
+    const btc = price('BTC/USDT') ?? c.btc, ema = c.ema200, dist = (btc / ema - 1) * 100, isIn = c.state === 'comprado';
+    $('core').className = 'core ' + (isIn ? 'in' : 'out');
+    $('coreState').textContent = isIn ? 'Segurando BTC' : 'Fora do BTC';
+    $('coreWhat').innerHTML = isIn
+      ? `O BTC está ${num(Math.abs(dist), 1)}% acima da média de 200 dias. O ponto de venda é um fechamento diário abaixo de <b>${px(ema)}</b>.`
+      : `O BTC está ${num(Math.abs(dist), 1)}% abaixo da média de 200 dias. O ponto de compra é um fechamento diário acima de <b>${px(ema)}</b>.`;
+    // trilho: escala de −30% a +30% em volta da EMA200
+    const span = Math.max(30, Math.ceil(Math.abs(dist) / 10) * 10 + 5);
+    const pos = v => Math.min(97, Math.max(3, 50 + v / span * 50));
+    const a = pos(0), b = pos(dist);
+    $('rail').innerHTML = `<div class="bar"></div><div class="fill" style="left:${Math.min(a, b)}%;width:${Math.abs(b - a)}%"></div>
+      <div class="pin ema" style="left:${a}%"><b>EMA200 ${px(ema)}</b><i></i></div>
+      <div class="dot" style="left:${b}%"></div>
+      <div class="pin btc" style="left:${b}%;top:40px"><i style="height:0;margin:0"></i><b>BTC ${px(btc)}</b></div>`;
+    $('rail').setAttribute('aria-label', `BTC ${px(btc)}, ${pct(dist)} em relação à média de 200 dias (${px(ema)})`);
+    $('rail').style.height = '84px';
+    $('coreSince').textContent = `${isIn ? 'Comprado' : 'Fora'} desde o fechamento de ${new Date(c.since + 'T12:00:00Z').toLocaleDateString('pt-BR')}`;
+    $('coreRule').textContent = isIn ? 'Vende quando o diário fechar abaixo da EMA200' : 'Compra quando o diário fechar acima da EMA200';
+  } else {
+    $('coreState').textContent = 'Núcleo BTC desligado';
+  }
+
+  // ---- números ----
+  const val = sl => s.budgets[sl] + s.positions.filter(p => p.sleeve === sl).reduce((a, p) => a + p.qty * (price(p.pair) ?? p.entry), 0);
+  const core = val('core'), trade = val('trade'), total = core + trade;
+  const start = s.equity.length ? s.equity[0].total : total;
+  const eq = s.equity.map(e => e.total).concat([total]);
+  const mn = Math.min(...eq), mx = Math.max(...eq), sp = (mx - mn) || 1;
+  const pts = eq.map((v, i) => `${(i / Math.max(1, eq.length - 1) * 300).toFixed(1)},${(52 - (v - mn) / sp * 48).toFixed(1)}`).join(' ');
+  $('figures').innerHTML = `
+    <div class="fig"><p>Carteira simulada</p><strong>${num(total)} USDT</strong><small class="${cls(total - start)}">${pct((total / start - 1) * 100, 2)} desde o início</small>
+      <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke" points="${pts}"/></svg></div>
+    <div class="fig"><p>Núcleo BTC</p><strong>${num(core)}</strong><small class="soft">USDT</small></div>
+    <div class="fig"><p>Rompimentos</p><strong>${num(trade)}</strong><small class="soft">USDT, ${s.positions.filter(p => p.sleeve === 'trade').length} de 3 posições</small></div>`;
+
+  // ---- radar ----
+  const held = new Set(s.positions.filter(p => p.sleeve === 'trade').map(p => p.pair));
+  const rows = s.radar.map(r => {
+    const now = price(r.pair) ?? r.price, d = (r.max_20d / now - 1) * 100;
+    return {...r, now, d};
+  }).sort((a, b) => (held.has(b.pair) - held.has(a.pair)) || (a.status === 'aguardando' ? 0 : 1) - (b.status === 'aguardando' ? 0 : 1) || a.d - b.d);
+  $('radar').innerHTML = rows.map(r => {
+    const isHeld = held.has(r.pair), off = !isHeld && r.status !== 'aguardando';
+    const fillPct = Math.max(2, Math.min(100, 100 - r.d * 5));       // 0% falta = cheio; 20% falta = vazio
+    let k = off ? 'off' : isHeld ? 'held' : r.d <= 0 ? 'hit' : r.d <= 3 ? 'near' : '';
+    let right = isHeld ? '<span class="tag buy">em posição</span>' : off ? '' : r.d <= 0 ? '<span class="tag buy">acima da máxima</span>' : `falta ${num(r.d, 1)}%`;
+    let note = off ? esc(r.status) : isHeld ? `Venda se fechar abaixo de ${px(r.min_10d)} (${pct((r.min_10d / r.now - 1) * 100)})`
+      : r.d <= 0 ? `Acima de ${px(r.max_20d)} agora. Vira compra se o dia fechar assim.` : `Máxima de 20 dias: ${px(r.max_20d)}`;
+    return `<li class="${k}"><span class="sym">${r.pair.split('/')[0]}</span>
+      <span class="meter" aria-hidden="true"><span style="width:${off ? 0 : isHeld ? 100 : fillPct}%"></span></span>
+      <span class="num">${right}</span><span class="note">${px(r.now)} USDT. ${note}</span></li>`;
+  }).join('');
+
+  // ---- posições ----
+  const pos = s.positions;
+  $('positions').innerHTML = pos.length ? pos.map(p => {
+    const now = price(p.pair) ?? p.entry, r = (now / p.entry - 1) * 100, isCore = p.sleeve === 'core';
+    return `<article class="pos"><header><h3>${p.pair.split('/')[0]} <span class="soft">${isCore ? 'núcleo' : 'rompimento'}</span></h3>
+      <strong class="${cls(r)}">${pct(r, 2)}</strong></header>
+      <dl><div><dt>Entrada</dt><dd>${px(p.entry)}</dd></div><div><dt>Agora</dt><dd>${px(now)}</dd></div>
+      <div><dt>${isCore ? 'Ponto de venda' : 'Stop'}</dt><dd>${isCore ? 'EMA200 ' + px(s.core?.ema200) : px(p.stop)}</dd></div></dl>
+      <p class="soft" style="margin:8px 0 0">Desde ${when(p.opened_at)}. ${num(p.qty * now)} USDT simulados.</p></article>`;
+  }).join('') : '<p class="empty">Nenhuma posição aberta. Quando houver um sinal de compra, ela aparece aqui e no Telegram.</p>';
+
+  // ---- linha do tempo ----
+  const ev = [...s.events].reverse().slice(0, 25);
+  $('timeline').innerHTML = ev.length ? ev.map(e => `<li class="${esc(e.type)}"><time datetime="${esc(e.ts)}">${when(e.ts)}</time>${esc(e.text)}</li>`).join('')
+    : '<li>Sem sinais ainda.</li>';
+}
+
+async function refresh(first) {
+  const b = $('refresh');
+  b.disabled = true;
+  try {
+    await loadState();
+    await loadLive();
+    render();
+  } catch (e) {
+    $('stamp').textContent = 'Não foi possível carregar os dados. Verifique a conexão e tente de novo.';
+  } finally { b.disabled = false; }
+}
+$('refresh').addEventListener('click', () => refresh());
+refresh(true);
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+ "version": 1,
+ "created_at": "2026-09-30T01:46:30+00:00",
+ "updated_at": null,
+ "source": null,
+ "last_candle_day": "2026-09-29",
+ "last_stop_check_ms": null,
+ "next_id": 2,
+ "budgets": {
+  "core": 2.2512499999999704,
+  "trade": 500.0
+ },
+ "positions": [
+  {
+   "id": 1,
+   "sleeve": "core",
+   "pair": "BTC/USDT",
+   "qty": 0.005940528106214054,
+   "entry": 83704.93155000001,
+   "stop": 0.0,
+   "initial_stop": 0.0,
+   "fee_in": 0.4972514985014985,
+   "opened_at": "2026-09-30T01:46:40+00:00",
+   "reason": "BTC acima da EMA200"
+  }
+ ],
+ "closed": [],
+ "events": [
+  {
+   "ts": "2026-09-30T01:46:30+00:00",
+   "type": "info",
+   "text": "Carteira simulada iniciada com 1.000 USDT (500 núcleo BTC, 500 rompimentos)"
+  },
+  {
+   "ts": "2026-09-30T01:46:40+00:00",
+   "type": "compra",
+   "text": "Núcleo BTC: compra @ 83.704,93"
+  }
+ ],
+ "equity": [
+  {
+   "ts": "2026-09-30T01:46:30+00:00",
+   "total": 1000.0,
+   "trade": 500.0,
+   "core": 500.0
+  },
+  {
+   "ts": "2026-09-30T01:46:40+00:00",
+   "total": 997.9788,
+   "trade": 500.0,
+   "core": 497.9788
+  },
+  {
+   "ts": "2026-09-30T18:46:12+00:00",
+   "total": 1000.15,
+   "trade": 500.0,
+   "core": 500.15
+  }
+ ],
+ "risk": {
+  "peak_trade": 500.0,
+  "day": {
+   "date": "2026-09-30",
+   "start": 500.0
+  },
+  "locked": null
+ },
+ "core": {
+  "state": "comprado",
+  "action": "comprou",
+  "btc": 83663.1,
+  "ema200": 74358.0,
+  "dist_pct": 12.5,
+  "since": "2026-08-20",
+  "candle_day": "2026-09-29"
+ },
+ "radar": [],
+ "prices": {}
+}

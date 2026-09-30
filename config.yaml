@@ -1,0 +1,47 @@
+# ============================================================
+#  SINAIS ONLINE — só código, sem IA, sem conta na corretora
+#  Roda no GitHub Actions; painel no GitHub Pages; avisos no Telegram.
+# ============================================================
+
+pairs:            # moedas acompanhadas (contra USDT)
+  - BTC/USDT
+  - ETH/USDT
+  - SOL/USDT
+  - XRP/USDT
+  - ADA/USDT
+  - LINK/USDT
+  - AVAX/USDT
+  - DOGE/USDT
+
+# Fontes de preço, na ordem de preferência. Se uma falhar (ex.: bloqueio da Bybit a servidores
+# em nuvem), usa a próxima. Os preços diários das grandes corretoras são praticamente iguais.
+data_sources: [bybit, binance, okx]
+daily_candles: 900          # histórico para a EMA200 bater com o backtest
+
+# ---------------- Estratégia v2 (escolhida no backtest de carteira de 29/09/2026) ----------------
+strategy:
+  breakout_days: 20         # COMPRA: diário fecha acima da máxima dos 20 dias anteriores
+  exit_days: 10             # VENDA: diário fecha abaixo da mínima dos 10 dias anteriores
+  ema_trend: 200            # filtro: par e BTC acima da EMA200 diária
+  atr_period: 14
+  stop_atr_mult: 2.0        # stop inicial = entrada − 2 × ATR diário
+
+core_btc:                   # NÚCLEO BTC (segurar)
+  enabled: true
+  pair: BTC/USDT
+  allocation_pct: 50        # compra quando o diário do BTC fecha acima da EMA200; vende quando fecha abaixo
+
+# ---------------- Carteira simulada (paper) para medir os sinais ----------------
+paper:
+  starting_equity: 1000     # USDT fictícios, divididos entre núcleo e trading
+  risk_per_trade_pct: 0.5
+  max_position_pct: 20.0
+  max_open_positions: 3
+  max_daily_loss_pct: 3.0
+  max_drawdown_pct: 15.0    # fatia de trading caiu 15% do pico → para de abrir novas operações
+  cooldown_hours_after_loss: 12
+  fee_pct: 0.1
+  slippage_pct: 0.05
+
+telegram:
+  daily_summary: true       # 1 mensagem por dia com o resumo, além dos sinais

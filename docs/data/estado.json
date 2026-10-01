@@ -1,10 +1,10 @@
 {
  "version": 1,
  "created_at": "2026-09-30T01:46:30+00:00",
- "updated_at": null,
- "source": null,
- "last_candle_day": "2026-09-29",
- "last_stop_check_ms": null,
+ "updated_at": "2026-10-01T00:10:23+00:00",
+ "source": "binance",
+ "last_candle_day": "2026-09-30",
+ "last_stop_check_ms": 1790813402233,
  "next_id": 2,
  "budgets": {
   "core": 2.2512499999999704,
@@ -55,25 +55,163 @@
    "total": 1000.15,
    "trade": 500.0,
    "core": 500.15
+  },
+  {
+   "ts": "2026-10-01T00:10:23+00:00",
+   "total": 999.0196,
+   "trade": 500.0,
+   "core": 499.0196
   }
  ],
  "risk": {
   "peak_trade": 500.0,
   "day": {
-   "date": "2026-09-30",
+   "date": "2026-10-01",
    "start": 500.0
   },
   "locked": null
  },
  "core": {
   "state": "comprado",
-  "action": "comprou",
-  "btc": 83663.1,
-  "ema200": 74358.0,
-  "dist_pct": 12.5,
+  "action": "manter",
+  "btc": 83623.6,
+  "ema200": 74452.52904909254,
+  "dist_pct": 12.318011312765798,
   "since": "2026-08-20",
-  "candle_day": "2026-09-29"
+  "candle_day": "2026-09-30",
+  "price_now": 83623.6,
+  "dist_now_pct": 12.318011312765798
  },
- "radar": [],
- "prices": {}
+ "radar": [
+  {
+   "pair": "BTC/USDT",
+   "close": 83623.6,
+   "price": 83623.6,
+   "max_20d": 87395.67,
+   "min_10d": 80126.04,
+   "ema200": 74452.52904909254,
+   "above_ema": true,
+   "dist_breakout_pct": 4.51077207869548,
+   "dist_exit_pct": -4.182503503795598,
+   "status": "aguardando",
+   "ret_7d_pct": -0.9170876896973379,
+   "signal_today": false
+  },
+  {
+   "pair": "ETH/USDT",
+   "close": 2686.01,
+   "price": 2686.01,
+   "max_20d": 2807.34,
+   "min_10d": 2564.33,
+   "ema200": 2268.2959775344357,
+   "above_ema": true,
+   "dist_breakout_pct": 4.517109020442955,
+   "dist_exit_pct": -4.530139500597552,
+   "status": "aguardando",
+   "ret_7d_pct": 0.0484223621918245,
+   "signal_today": false
+  },
+  {
+   "pair": "SOL/USDT",
+   "close": 118.12,
+   "price": 118.12,
+   "max_20d": 124.95,
+   "min_10d": 107.4,
+   "ema200": 95.14554811533773,
+   "above_ema": true,
+   "dist_breakout_pct": 5.782255333559094,
+   "dist_exit_pct": -9.075516423975616,
+   "status": "aguardando",
+   "ret_7d_pct": 2.7219758239847014,
+   "signal_today": false
+  },
+  {
+   "pair": "XRP/USDT",
+   "close": 1.49,
+   "price": 1.49,
+   "max_20d": 1.6581,
+   "min_10d": 1.368,
+   "ema200": 1.3714928595451006,
+   "above_ema": true,
+   "dist_breakout_pct": 11.28187919463086,
+   "dist_exit_pct": -8.187919463087246,
+   "status": "aguardando",
+   "ret_7d_pct": -0.7328447701532292,
+   "signal_today": false
+  },
+  {
+   "pair": "ADA/USDT",
+   "close": 0.2466,
+   "price": 0.2466,
+   "max_20d": 0.2654,
+   "min_10d": 0.2183,
+   "ema200": 0.23991709189844063,
+   "above_ema": true,
+   "dist_breakout_pct": 7.623682076236826,
+   "dist_exit_pct": -11.476074614760757,
+   "status": "aguardando",
+   "ret_7d_pct": 3.439597315436238,
+   "signal_today": false
+  },
+  {
+   "pair": "LINK/USDT",
+   "close": 14.366,
+   "price": 14.366,
+   "max_20d": 15.777,
+   "min_10d": 11.901,
+   "ema200": 10.488212883712613,
+   "above_ema": true,
+   "dist_breakout_pct": 9.821801475706526,
+   "dist_exit_pct": -17.15856884310176,
+   "status": "aguardando",
+   "ret_7d_pct": 16.276811007689183,
+   "signal_today": false
+  },
+  {
+   "pair": "AVAX/USDT",
+   "close": 10.937,
+   "price": 10.937,
+   "max_20d": 12.008,
+   "min_10d": 9.436,
+   "ema200": 8.841513054081371,
+   "above_ema": true,
+   "dist_breakout_pct": 9.792447654749935,
+   "dist_exit_pct": -13.724055956843738,
+   "status": "aguardando",
+   "ret_7d_pct": 6.55689789555729,
+   "signal_today": false
+  },
+  {
+   "pair": "DOGE/USDT",
+   "close": 0.09456,
+   "price": 0.09456,
+   "max_20d": 0.10589,
+   "min_10d": 0.08434,
+   "ema200": 0.09326283528106788,
+   "above_ema": true,
+   "dist_breakout_pct": 11.981810490693734,
+   "dist_exit_pct": -10.807952622673444,
+   "status": "aguardando",
+   "ret_7d_pct": 1.984469370146691,
+   "signal_today": false
+  }
+ ],
+ "prices": {
+  "BTC/USDT": 83623.6,
+  "ETH/USDT": 2686.01,
+  "SOL/USDT": 118.12,
+  "XRP/USDT": 1.49,
+  "ADA/USDT": 0.2466,
+  "LINK/USDT": 14.366,
+  "AVAX/USDT": 10.937,
+  "DOGE/USDT": 0.09456
+ },
+ "run": {
+  "trigger": "workflow_dispatch",
+  "new_day": true,
+  "candle_day": "2026-09-30",
+  "errors": {
+   "bybit:BTC/USDT": "HTTP 403: {\n    error:The Amazon CloudFront distribution is configured to block access from your country\n}"
+  }
+ }
 }

@@ -45,12 +45,13 @@ paper:
 
 # ---------------- Aviso de aporte (longo prazo) — só avisa; a compra é sua, na sua corretora ----------------
 # Mede o preço pelo múltiplo de Mayer (preço ÷ média de 200 dias). Não mexe na carteira simulada.
+# Uma mensagem por dia: "MUDOU DE FAIXA" quando troca de faixa; "se mantém" quando continua na mesma.
 #   ≤ 1,0 abaixo da média → sugere 1,5× o aporte | ≤ 0,8 barato → 2× | ≤ 0,6 muito barato → 2× | > 2,4 caro → 0,5×
 aporte:
   enabled: true
   pairs: [BTC/USDT]         # moedas do aporte de longo prazo
   reminder_day: 5           # dia do mês do lembrete de aporte (horário de Brasília); apague a linha para desligar
-  alert_cooldown_days: 30   # depois de um aviso, só avisa de novo em 30 dias (ou antes, se ficar ainda mais barato)
+  notify_when_unchanged: true   # manda mensagem todo dia mesmo sem trocar de faixa ("se mantém")
 
 telegram:
   daily_summary: true       # 1 mensagem por dia com o resumo, além dos sinais

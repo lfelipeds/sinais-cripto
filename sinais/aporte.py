@@ -8,6 +8,7 @@ Faixas (testadas no BTC de 2015 a 2026, relatório de 01/10/2026):
   ≤ 1,5  normal        45% dos dias
   ≤ 2,4  esticado      13% dos dias
   > 2,4  caro           1% dos dias; 1 ano depois abaixo em 83% dos casos
+Avisos: uma mensagem por dia — "MUDOU DE FAIXA" quando troca de faixa, "se mantém" quando continua.
 O aporte mensal fixo continua sendo a base (esperar a queda para comprar rendeu MENOS no teste). As faixas
 só sugerem reforçar (1,5× / 2×) ou reduzir (0,5×) o aporte do mês — isso baixou o preço médio em 2% a 9%.
 """
@@ -57,23 +58,41 @@ def _fmt(x):
     return f"{x:,.0f}".replace(",", ".") if x >= 100 else f"{x:.4g}".replace(".", ",")
 
 
-def alert_text(pair, lv):
+def _head(pair, lv):
     coin = pair.split("/")[0]
     m = f"{lv['mayer']:.2f}".replace(".", ",")
+    return coin, f"{coin} {_fmt(lv['close'])} USD = {m}× a média de 200 dias ({_fmt(lv['sma200'])})."
+
+
+def _advice(lv):
     mult = f"{lv['mult']:g}".replace(".", ",")
-    return (f"🟢 PREÇO VANTAJOSO — {coin} ({lv['zone_name']})\n"
-            f"{coin} {_fmt(lv['close'])} USD = {m}× a média de 200 dias ({_fmt(lv['sma200'])}).\n"
-            f"Sugestão para o aporte de longo prazo: {mult}× o valor normal do mês.\n"
-            f"Está {abs(lv['off_high_pct']):.0f}% abaixo da máxima dos últimos {lv['high_days']} dias.\n"
-            f"Lembrete: é aviso, não garantia — o preço pode cair mais. Compra na sua corretora.")
+    if lv["zone"] in CHEAP:
+        return f"✅ Vantajoso para compra. Aporte sugerido: {mult}× o valor normal do mês."
+    if lv["zone"] == "caro":
+        return f"⚠️ Caro. Aporte sugerido: {mult}× o valor normal; guarde a diferença."
+    return (f"Não está vantajoso. Aporte sugerido: {mult}× (normal). "
+            f"Fica vantajoso abaixo de {_fmt(lv['price_below_avg'])}; barato abaixo de {_fmt(lv['price_cheap'])}.")
 
 
-def expensive_text(pair, lv):
-    coin = pair.split("/")[0]
-    m = f"{lv['mayer']:.2f}".replace(".", ",")
-    return (f"🟠 PREÇO CARO — {coin}\n"
-            f"{coin} {_fmt(lv['close'])} USD = {m}× a média de 200 dias ({_fmt(lv['sma200'])}).\n"
-            f"Sugestão: reduzir o aporte do mês para 0,5× e guardar a diferença para quando baratear.")
+def _icon(zone):
+    return "🟢" if zone in CHEAP else "🟠" if zone == "caro" else "⚪"
+
+
+def change_text(pair, lv, prev_name):
+    """Mensagem quando o preço troca de faixa (ou na primeira leitura, prev_name=None)."""
+    coin, head = _head(pair, lv)
+    if prev_name is None:
+        title = f"{_icon(lv['zone'])} APORTE {coin} — faixa atual: {lv['zone_name']}"
+    else:
+        title = f"{_icon(lv['zone'])} APORTE {coin} — MUDOU DE FAIXA: {prev_name} → {lv['zone_name']}"
+    return f"{title}\n{head}\n{_advice(lv)}"
+
+
+def stay_text(pair, lv, days):
+    """Mensagem diária quando o preço continua na mesma faixa."""
+    coin, head = _head(pair, lv)
+    tempo = "desde ontem" if days <= 1 else f"há {days} dias"
+    return f"{_icon(lv['zone'])} APORTE {coin} — se mantém em {lv['zone_name']} ({tempo})\n{head}\n{_advice(lv)}"
 
 
 def reminder_text(levels_by_pair):
@@ -90,33 +109,29 @@ def reminder_text(levels_by_pair):
 
 
 def update(st: dict, lv_by_pair: dict, cfg: dict, notify, now_ms: int) -> None:
-    """Chamado 1× por dia (novo diário fechado). Atualiza st['aporte'] e manda os avisos."""
+    """Chamado 1× por dia (novo diário fechado). Manda UMA mensagem por moeda todo dia:
+    'mudou de faixa' quando troca, 'se mantém' quando continua na mesma faixa."""
     a = cfg.get("aporte") or {}
     if not a.get("enabled", True) or not lv_by_pair:
         return
     ap = st.setdefault("aporte", {"pairs": {}, "last_reminder": None})
-    cooldown = int(a.get("alert_cooldown_days", 30))
     for pair, lv in lv_by_pair.items():
         prev = ap["pairs"].get(pair) or {}
-        last = prev.get("last_alert")                       # {"zone":…, "date":…}
-        day = datetime.strptime(lv["date"], "%Y-%m-%d")
-        recent = last and (day - datetime.strptime(last["date"], "%Y-%m-%d")).days < cooldown
-        send = None
-        if lv["zone"] in CHEAP:
-            # avisa ao entrar numa faixa vantajosa; dentro do prazo de silêncio, só se ficou MAIS barato
-            if not recent or last["zone"] not in CHEAP or RANK[lv["zone"]] < RANK[last["zone"]]:
-                send = alert_text(pair, lv)
-        elif lv["zone"] == "caro":
-            if not recent or last["zone"] != "caro":
-                send = expensive_text(pair, lv)
-        if send:
-            notify(send)
-            last = {"zone": lv["zone"], "date": lv["date"]}
+        if prev.get("date") == lv["date"]:                  # mesmo diário já avisado
+            continue
+        changed = prev.get("zone") != lv["zone"]
+        since = lv["date"] if changed else prev.get("zone_since", lv["date"])
+        days = (datetime.strptime(lv["date"], "%Y-%m-%d") - datetime.strptime(since, "%Y-%m-%d")).days
+        if changed:
+            notify(change_text(pair, lv, prev.get("zone_name")))
             st.setdefault("events", []).append(
                 {"ts": datetime.fromtimestamp(now_ms / 1000, timezone.utc).isoformat(timespec="seconds"),
-                 "type": "aporte", "text": f"Aviso de aporte {pair.split('/')[0]}: {lv['zone_name']} "
-                                           f"({lv['mayer']:.2f}× a média de 200 dias)"})
-        ap["pairs"][pair] = {**lv, "last_alert": last}
+                 "type": "aporte",
+                 "text": f"Aporte {pair.split('/')[0]}: " + (f"{prev['zone_name']} → " if prev.get("zone_name") else "")
+                         + f"{lv['zone_name']} ({lv['mayer']:.2f}× a média de 200 dias)".replace(".", ",")})
+        elif a.get("notify_when_unchanged", True):
+            notify(stay_text(pair, lv, days))
+        ap["pairs"][pair] = {**lv, "zone_since": since, "zone_days": days}
 
     # lembrete mensal, no dia escolhido (horário de Brasília)
     dom = a.get("reminder_day")

@@ -117,9 +117,6 @@ def summary_text(st, cfg, day):
                                                           for r in near))
     if st["risk"].get("locked"):
         lines.append(f"⛔ Trava ativa: {st['risk']['locked']}")
-    ap = aporte.summary_line(st)
-    if ap:
-        lines.append(ap)
     url = pages_url()
     if url:
         lines.append(f"Painel: {url}")

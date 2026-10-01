@@ -199,8 +199,8 @@ def test_aporte_zones():
     assert lv["zone"] == "caro" and lv["mult"] == 0.5
 
 
-def test_aporte_alerts_once_then_only_if_cheaper():
-    cfg = {"aporte": {"enabled": True, "pairs": ["BTC/USDT"], "alert_cooldown_days": 30}}
+def test_aporte_message_every_day_change_or_stay():
+    cfg = {"aporte": {"enabled": True, "pairs": ["BTC/USDT"]}}
     st, msgs = {}, []
     day = 86_400_000
     t0 = 1_790_000_000_000
@@ -211,19 +211,28 @@ def test_aporte_alerts_once_then_only_if_cheaper():
         aporte.update(st, {"BTC/USDT": aporte.levels(df)}, cfg, msgs.append, t0 + n * day)
 
     step(0, 130.0)
-    assert msgs == []                                   # normal → silêncio
-    step(1, 95.0)
-    assert len(msgs) == 1 and "PREÇO VANTAJOSO" in msgs[0] and "1,5×" in msgs[0]
-    step(2, 96.0)
-    assert len(msgs) == 1                               # mesma faixa → não repete
-    step(3, 70.0)
-    assert len(msgs) == 2 and "BARATO" in msgs[1] and "2×" in msgs[1]     # ficou mais barato → avisa
-    step(4, 95.0)
-    assert len(msgs) == 2                               # voltou para faixa menos barata → silêncio
-    step(40, 95.0)
-    assert len(msgs) == 3                               # passou o prazo de silêncio → avisa de novo
-    assert st["aporte"]["pairs"]["BTC/USDT"]["zone"] == "abaixo_media"
-    assert any(e["type"] == "aporte" for e in st["events"])
+    assert len(msgs) == 1 and "faixa atual: NORMAL" in msgs[0] and "Não está vantajoso" in msgs[0]
+    step(0, 130.0)
+    assert len(msgs) == 1                               # mesmo diário → não repete
+    step(1, 131.0)
+    assert len(msgs) == 2 and "se mantém em NORMAL (desde ontem)" in msgs[1]
+    step(2, 95.0)
+    assert len(msgs) == 3 and "MUDOU DE FAIXA: NORMAL → ABAIXO DA MÉDIA" in msgs[2] and "1,5×" in msgs[2] \
+        and "Vantajoso" in msgs[2]
+    step(3, 96.0)
+    step(4, 96.0)
+    assert len(msgs) == 5 and "se mantém em ABAIXO DA MÉDIA (há 2 dias)" in msgs[4]
+    step(5, 70.0)
+    assert "ABAIXO DA MÉDIA → BARATO" in msgs[5] and "2×" in msgs[5]
+    step(6, 130.0)
+    assert "BARATO → NORMAL" in msgs[6]                 # saída da faixa vantajosa também avisa
+    step(7, 300.0)
+    assert "NORMAL → CARO" in msgs[7] and "0,5×" in msgs[7]
+    assert st["aporte"]["pairs"]["BTC/USDT"]["zone"] == "caro"
+    assert sum(e["type"] == "aporte" for e in st["events"]) == 5      # só as trocas entram no histórico
+    cfg["aporte"]["notify_when_unchanged"] = False
+    step(8, 301.0)
+    assert len(msgs) == 8                               # opção de silenciar o "se mantém"
 
 
 def test_aporte_monthly_reminder_once(env):
@@ -233,7 +242,7 @@ def test_aporte_monthly_reminder_once(env):
     st = runmod.run(env, market(Fake(now, {"BTC/USDT": 0.004})), msgs.append, now)
     assert sum("Dia do aporte mensal" in m for m in msgs) == 1
     assert "BTC/USDT" in st["aporte"]["pairs"]
-    assert any("Aporte longo prazo" in m for m in msgs)            # linha no resumo diário
+    assert any("APORTE BTC — faixa atual" in m for m in msgs)
     msgs2 = []
     runmod.run(env, market(Fake(now + 86_400_000, {"BTC/USDT": 0.004})), msgs2.append, now + 86_400_000)
     assert not any("Dia do aporte mensal" in m for m in msgs2) or \

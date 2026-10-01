@@ -227,7 +227,7 @@ details.how summary{font-size:16px;font-weight:600;cursor:pointer;min-height:24p
     <div class="cols">
       <div><b>EMA200</b><br>Média móvel dos últimos 200 fechamentos diários, com mais peso nos recentes. O BTC acima dela indica tendência de alta.</div>
       <div><b>Núcleo BTC</b><br>Compra quando o diário fecha acima da EMA200 e vende quando fecha abaixo. É a metade da carteira que segura.</div>
-      <div><b>Aporte de longo prazo</b><br>Compara o preço com a média simples de 200 dias. Abaixo da média sugere 1,5× o aporte do mês; abaixo de 0,8× a média, 2×; acima de 2,4×, metade. O aporte fixo todo mês continua sendo a base.</div>
+      <div><b>Aporte de longo prazo</b><br>Compara o preço com a média simples de 200 dias. Abaixo da média sugere 1,5× o aporte do mês; abaixo de 0,8× a média, 2×; acima de 2,4×, metade. O aporte fixo todo mês continua sendo a base. O Telegram avisa todo dia: se mudou de faixa ou se se mantém.</div>
       <div><b>Rompimento</b><br>Compra quando a moeda fecha acima da máxima de 20 dias (com ela e o BTC acima da EMA200). Vende abaixo da mínima de 10 dias ou no stop inicial de 2 ATR (a oscilação média diária).</div>
     </div>
     <p class="fine">"Atualizar preços" busca a cotação agora, direto no seu navegador. "Rodar análise" abre o GitHub para iniciar uma análise completa, que leva cerca de 1 minuto. A análise também roda sozinha às 21h11 e a cada 4 horas.</p>
@@ -428,7 +428,7 @@ function render() {
     return `<article class="pos"><header><span>${pair.split('/')[0]} <span class="tag ${z[1]}">${z[0]}</span></span><b>aporte ${num(z[2], z[2] % 1 ? 1 : 0)}×</b></header>
       <dl><div><dt>Agora</dt><dd>${px(now)}</dd></div><div><dt>Média de 200 dias</dt><dd>${px(a.sma200)}</dd></div><div><dt>Preço ÷ média</dt><dd>${num(m, 2)}×</dd></div></dl>
       <p class="foot">${m <= 1 ? 'Preço vantajoso para reforçar o aporte do mês.'
-        : `Fica vantajoso abaixo de ${px(a.price_below_avg)} (falta cair ${num((1 - a.price_below_avg / now) * 100, 0)}%) e barato abaixo de ${px(a.price_cheap)}.`} ${num(Math.abs(a.off_high_pct), 0)}% abaixo da máxima recente.</p></article>`;
+        : `Fica vantajoso abaixo de ${px(a.price_below_avg)} (falta cair ${num((1 - a.price_below_avg / now) * 100, 0)}%) e barato abaixo de ${px(a.price_cheap)}.`} ${num(Math.abs(a.off_high_pct), 0)}% abaixo da máxima recente.${a.zone_since ? ` No fechamento diário: ${esc(a.zone_name)} desde ${new Date(a.zone_since + 'T12:00:00Z').toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'})}.` : ''}</p></article>`;
   }).join('');
 
   // ---- histórico ----

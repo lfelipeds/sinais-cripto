@@ -191,6 +191,7 @@ def test_aporte_zones():
     assert aporte.levels(_daily([100.0] * 150)) is None                     # histórico curto
     lv = aporte.levels(_daily([100.0] * 300))
     assert lv["zone"] == "abaixo_media" and lv["mult"] == 1.5 and lv["mayer"] == pytest.approx(1.0)
+    assert len(lv["history"]) == 101 and set(lv["history"][-1]) == {"d", "c", "s"}      # 300 dias − 199 de aquecimento
     lv = aporte.levels(_daily([100.0] * 299 + [75.0]))
     assert lv["zone"] == "barato" and lv["mult"] == 2.0
     lv = aporte.levels(_daily([100.0] * 299 + [130.0]))

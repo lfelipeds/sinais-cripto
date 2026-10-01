@@ -145,6 +145,41 @@ details.how summary{font-size:16px;font-weight:600;cursor:pointer;min-height:24p
   .radar .note{grid-column:1/-1;grid-row:3}
 }
 .sk{color:var(--muted)}
+
+/* quadro DCA */
+.dca-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.dca-head>div:first-child{flex:1;min-width:0}
+.dca-now{text-align:right;flex:none;max-width:48%}
+.dca-now .tag{font-size:14px;padding:4px 12px}
+.dca-now strong{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-top:4px}
+.dca-now small{display:block;font-size:13px;color:var(--muted)}
+.dca-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:16px}
+@media (max-width:1000px){.dca-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:700px){.dca-head{flex-direction:column;gap:12px}.dca-now{text-align:left;max-width:none}}
+.zbar{position:relative;height:74px;margin-top:22px}
+.zbar .seg{position:absolute;top:0;height:22px;border-radius:4px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.zbar .seg.cur{outline:2px solid var(--ink);outline-offset:2px}
+.zbar .tick{position:absolute;top:30px;font-size:12px;color:var(--muted);transform:translateX(-50%);white-space:nowrap;text-align:center;line-height:1.25}
+.zbar .tick b{display:block;color:var(--soft);font-weight:600}
+.zbar .pin{position:absolute;top:-20px;transform:translateX(-50%);font-size:12px;font-weight:700;color:var(--blue-ink);white-space:nowrap}
+.zbar .pin::after{content:"";position:absolute;left:50%;top:17px;width:2px;height:28px;margin-left:-1px;background:var(--blue)}
+.z0{background:#1F7A5C} .z1{background:#2C9A75} .z2{background:#245F4E} .z3{background:#2D3852} .z4{background:#6B5320} .z5{background:#7A3340}
+.dca-next{font-size:15px;margin-top:6px;color:var(--soft)}
+.dca-next b{color:var(--ink)}
+.ztable{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+.ztable th{font-size:12px;font-weight:600;color:var(--muted);text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+.ztable td{padding:7px 8px;border-bottom:1px solid var(--line2)}
+.ztable td:nth-child(n+2),.ztable th:nth-child(n+2){text-align:right;white-space:nowrap}
+.ztable tr.cur td{background:var(--blue-soft);font-weight:600}
+.ztable .sq{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:baseline}
+.dca-chart{height:300px;margin-top:0;margin-right:96px}
+.dca-chart .bl{position:absolute;left:100%;margin-left:8px;font-size:12px;color:var(--muted);transform:translateY(-50%);white-space:nowrap;line-height:1.2}
+.dca-chart .bl b{display:block;color:var(--soft);font-weight:600}
+.dca-chart .cross{position:absolute;top:0;bottom:0;width:1px;background:var(--muted);pointer-events:none;display:none}
+.dca-chart .tip{position:absolute;top:8px;background:var(--inset);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;pointer-events:none;display:none;white-space:nowrap;z-index:2}
+.dca-chart .tip b{display:block}
+.key i.sw{width:14px;height:10px;border:0;background:rgba(63,191,143,.22);border-radius:2px}
+@media (max-width:560px){.zbar .tick{font-size:11px}.dca-chart{height:240px;margin-right:84px}}
 </style>
 </head>
 <body>
@@ -198,6 +233,28 @@ details.how summary{font-size:16px;font-weight:600;cursor:pointer;min-height:24p
     </section>
   </div>
 
+  <section class="card dca" id="dcaSec" hidden>
+    <div class="dca-head">
+      <div>
+        <h2>DCA · aporte de longo prazo</h2>
+        <p class="lead">Em que faixa de preço o BTC está para as suas compras mensais, e quanto falta para mudar de faixa. Fora da carteira simulada.</p>
+      </div>
+      <div class="dca-now" id="dcaNow"></div>
+    </div>
+    <div class="dca-grid">
+      <div>
+        <div class="zbar" id="zbar" role="img" aria-label=""></div>
+        <p class="dca-next" id="dcaNext"></p>
+        <table class="ztable" id="ztable"></table>
+      </div>
+      <div>
+        <div class="chart dca-chart" id="dcaChart"></div>
+        <div class="axis"><span id="dcaFrom"></span><span id="dcaTo"></span></div>
+        <div class="key"><span><i style="border-color:var(--blue)"></i>BTC (fechamento diário)</span><span><i style="border-color:var(--muted);border-top-style:dashed;border-top-width:2px"></i>Limites das faixas</span><span><i class="sw"></i>Área vantajosa (abaixo da média)</span></div>
+      </div>
+    </div>
+  </section>
+
   <div class="row">
     <section class="card">
       <h2>Radar de rompimentos</h2>
@@ -206,11 +263,6 @@ details.how summary{font-size:16px;font-weight:600;cursor:pointer;min-height:24p
       <ul class="radar" id="radar"></ul>
     </section>
     <div class="stack">
-      <section class="card" id="aporteSec" hidden>
-        <h2>Aporte de longo prazo</h2>
-        <p class="lead">Aviso para as suas compras mensais, feitas por você na sua corretora. Fora da carteira simulada.</p>
-        <div id="aporte"></div>
-      </section>
       <section class="card">
         <h2>Posições abertas</h2>
         <div id="positions"></div>
@@ -418,18 +470,71 @@ function render() {
   }).join('');
   $('positions').innerHTML = posCards + (nTrade ? '' : '<p class="empty">Nenhum rompimento aberto. Quando houver sinal, a posição aparece aqui e no Telegram.</p>');
 
-  // ---- aporte de longo prazo ----
-  const ap = Object.entries(s.aporte?.pairs ?? {});
-  $('aporteSec').hidden = !ap.length;
-  $('aporte').innerHTML = ap.map(([pair, a]) => {
-    const now = price(pair) ?? a.close, m = now / a.sma200;
-    const z = m <= 0.6 ? ['MUITO BARATO', 'buy', 2] : m <= 0.8 ? ['BARATO', 'buy', 2] : m <= 1 ? ['ABAIXO DA MÉDIA', 'buy', 1.5]
-      : m <= 1.5 ? ['NORMAL', 'info', 1] : m <= 2.4 ? ['ESTICADO', 'warn', 1] : ['CARO', 'sell', 0.5];
-    return `<article class="pos"><header><span>${pair.split('/')[0]} <span class="tag ${z[1]}">${z[0]}</span></span><b>aporte ${num(z[2], z[2] % 1 ? 1 : 0)}×</b></header>
-      <dl><div><dt>Agora</dt><dd>${px(now)}</dd></div><div><dt>Média de 200 dias</dt><dd>${px(a.sma200)}</dd></div><div><dt>Preço ÷ média</dt><dd>${num(m, 2)}×</dd></div></dl>
-      <p class="foot">${m <= 1 ? 'Preço vantajoso para reforçar o aporte do mês.'
-        : `Fica vantajoso abaixo de ${px(a.price_below_avg)} (falta cair ${num((1 - a.price_below_avg / now) * 100, 0)}%) e barato abaixo de ${px(a.price_cheap)}.`} ${num(Math.abs(a.off_high_pct), 0)}% abaixo da máxima recente.${a.zone_since ? ` No fechamento diário: ${esc(a.zone_name)} desde ${new Date(a.zone_since + 'T12:00:00Z').toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'})}.` : ''}</p></article>`;
-  }).join('');
+  // ---- quadro DCA (aporte de longo prazo) ----
+  const apE = Object.entries(s.aporte?.pairs ?? {})[0];
+  $('dcaSec').hidden = !apE;
+  if (apE) {
+    const p0 = x => x >= 1000 ? num(x, 0) : px(x);
+    const [pair, a] = apE, coin = pair.split('/')[0], now = price(pair) ?? a.close, sma = a.sma200, m = now / sma;
+    // faixas: [limite superior em múltiplos da média, nome, selo, aporte]
+    const Z = [[0.6, 'Muito barato', 'buy', 2], [0.8, 'Barato', 'buy', 2], [1.0, 'Abaixo da média', 'buy', 1.5],
+               [1.5, 'Normal', 'info', 1], [2.4, 'Esticado', 'warn', 1], [Infinity, 'Caro', 'sell', 0.5]];
+    const zi = Z.findIndex(z => m <= z[0]), z = Z[zi], mult = x => num(x, x % 1 ? 1 : 0) + '×';
+    const lowB = zi > 0 ? Z[zi - 1][0] * sma : null, upB = zi < 5 ? z[0] * sma : null;
+    const dDown = lowB ? (1 - lowB / now) * 100 : null, dUp = upB ? (upB / now - 1) * 100 : null;
+    const nearTxt = Math.min(dDown ?? 99, dUp ?? 99) <= 5 ? ' <span class="tag warn">PERTO DE MUDAR</span>' : '';
+    $('dcaNow').innerHTML = `<span class="tag ${z[2]}">${z[1].toUpperCase()}</span>${nearTxt}<strong>aporte ${mult(z[3])}</strong>
+      <small>${coin} ${p0(now)} · ${num(m, 2)}× a média de 200 dias (${p0(sma)})${a.zone_since ? ` · nesta faixa desde ${day(a.zone_since + 'T12:00:00Z')}` : ''}</small>`;
+
+    // régua: 6 segmentos iguais; posição do preço interpolada (escala log) dentro do segmento
+    const edges = [0.45, 0.6, 0.8, 1.0, 1.5, 2.4, 3.2], W = 100 / 6;
+    const mc = Math.min(Math.max(m, edges[0]), edges[6]);
+    const pos = (zi + Math.log(mc / edges[zi]) / Math.log(edges[zi + 1] / edges[zi])) * W;
+    $('zbar').setAttribute('aria-label', `${coin} na faixa ${z[1]}, ${num(m, 2)} vezes a média de 200 dias`);
+    $('zbar').innerHTML = Z.map((q, i) => `<div class="seg z${i}${i === zi ? ' cur' : ''}" style="left:calc(${i * W}% + 1px);width:calc(${W}% - 2px)" title="${q[1]}">${mult(q[3])}</div>`).join('')
+      + Z.slice(0, 5).map((q, i) => `<div class="tick" style="left:${(i + 1) * W}%"><b>${p0(q[0] * sma)}</b>${num(q[0], 1)}×</div>`).join('')
+      + `<div class="pin" style="left:${Math.min(Math.max(pos, 6), 94)}%">${coin} ${p0(now)}</div>`;
+    const parts = [];
+    if (lowB) parts.push(`falta cair <b>${num(dDown, 1)}%</b> (até ${p0(lowB)}) para entrar em <b>${Z[zi - 1][1]}</b>`);
+    if (upB) parts.push(`falta subir <b>${num(dUp, 1)}%</b> (até ${p0(upB)}) para <b>${Z[zi + 1][1]}</b>`);
+    $('dcaNext').innerHTML = parts.length ? parts.join(' · ').replace(/^f/, 'F') + '.' : '';
+
+    // tabela das faixas (também serve de versão em texto do gráfico)
+    $('ztable').innerHTML = `<thead><tr><th>Faixa</th><th>Preço do ${coin} (USD)</th><th>Aporte</th></tr></thead><tbody>` + Z.map((q, i) => {
+      const lo = i ? Z[i - 1][0] * sma : null, hi = i < 5 ? q[0] * sma : null;
+      const range = lo && hi ? `${p0(lo)} a ${p0(hi)}` : hi ? `abaixo de ${p0(hi)}` : `acima de ${p0(lo)}`;
+      return `<tr class="${i === zi ? 'cur' : ''}"><td><span class="sq z${i}"></span>${q[1]}${i === zi ? ' (agora)' : ''}</td><td>${range}</td><td>${mult(q[3])}</td></tr>`; }).join('') + '</tbody>';
+
+    // gráfico: preço contra os limites das faixas (que se movem com a média)
+    const H = a.history ?? [];
+    if (H.length > 10) {
+      const lastS = H[H.length - 1].s;
+      const want = [0.6, 0.8, 1.0, 1.5, 2.4].filter(k => { const d = Math.abs(Math.log(m / k)); return d === Math.min(...[0.6, 0.8, 1.0, 1.5, 2.4].map(j => Math.abs(Math.log(m / j)))) || k === (zi > 0 ? Z[zi - 1][0] : -1) || k === (zi < 5 ? z[0] : -1) || k === 1.0; });
+      const vals = H.map(h => h.c).concat([now], want.flatMap(k => [k * lastS, k * H[0].s]));
+      let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * .07; lo -= pad; hi += pad;
+      const X = i => i / (H.length - 1) * 100, Y = v => 100 - (v - lo) / (hi - lo) * 100;
+      const pts = f => H.map((h, i) => `${X(i).toFixed(2)},${Y(f(h)).toFixed(2)}`).join(' ');
+      const name = {0.6: 'muito barato abaixo', 0.8: 'barato abaixo', 1: 'vantajoso abaixo', 1.5: 'esticado acima', 2.4: 'caro acima'};
+      const grid = [0, 1, 2, 3].map(i => `<line x1="0" x2="100" y1="${i * 33.3}" y2="${i * 33.3}" stroke="#222B42" stroke-width="1" vector-effect="non-scaling-stroke"/>`).join('');
+      $('dcaChart').innerHTML = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="${coin} ${p0(now)} contra os limites das faixas de aporte nos últimos ${H.length} dias">${grid}
+        <polygon points="${pts(h => h.s)} 100,100 0,100" fill="rgba(63,191,143,.14)"/>
+        ${want.map(k => `<polyline fill="none" stroke="#9AA6BF" stroke-width="1.5" stroke-dasharray="5 5" vector-effect="non-scaling-stroke" points="${pts(h => h.s * k)}"/>`).join('')}
+        <polyline fill="none" stroke="#4DA3FF" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="${pts(h => h.c)}"/></svg>
+        <span class="end" style="left:100%;top:${Y(now)}%"></span>
+        ${want.map(k => `<span class="bl" style="top:${Y(k * lastS)}%"><b>${p0(k * lastS)}</b>${name[k]}</span>`).join('')}
+        <span class="cross"></span><div class="tip"></div>`;
+      $('dcaFrom').textContent = day(H[0].d + 'T12:00:00Z'); $('dcaTo').textContent = day(H[H.length - 1].d + 'T12:00:00Z');
+      const box = $('dcaChart'), cross = box.querySelector('.cross'), tip = box.querySelector('.tip');
+      box.onpointermove = e => {
+        const r = box.getBoundingClientRect(), f = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+        const h = H[Math.round(f * (H.length - 1))], mm = h.c / h.s, q = Z.find(q => mm <= q[0]);
+        cross.style.display = tip.style.display = 'block'; cross.style.left = f * 100 + '%';
+        tip.innerHTML = `<b>${new Date(h.d + 'T12:00:00Z').toLocaleDateString('pt-BR')}</b>${coin} ${p0(h.c)}<br>${num(mm, 2)}× a média (${p0(h.s)})<br>${q[1]} · aporte ${mult(q[3])}`;
+        tip.style.left = f > .5 ? '' : `calc(${f * 100}% + 10px)`; tip.style.right = f > .5 ? `calc(${(1 - f) * 100}% + 10px)` : '';
+      };
+      box.onpointerleave = () => { cross.style.display = tip.style.display = 'none'; };
+    } else { $('dcaChart').innerHTML = '<p class="empty">O gráfico aparece depois da próxima análise diária.</p>'; }
+  }
 
   // ---- histórico ----
   const label = {compra: ['COMPRA', 'buy'], venda: ['VENDA', 'sell'], trava: ['TRAVA', 'warn'], aporte: ['APORTE', 'buy']};

@@ -25,6 +25,7 @@ from .dados import Market
 
 ROOT = Path(__file__).resolve().parent.parent
 STATE = ROOT / "docs" / "data" / "estado.json"
+HISTORY_DAYS = 120
 log = logging.getLogger("run")
 
 
@@ -135,12 +136,15 @@ def run(cfg, market=None, notify=None, now_ms=None):
 
     # ---- diário ----
     lv = {}
+    btc_daily = None
     for pair in pairs:
         try:
             d = strat.indicators(market.candles(pair, "1d", cfg["daily_candles"]), s)
             if len(d) < s["ema_trend"] + 5:
                 raise RuntimeError(f"histórico curto ({len(d)} dias)")
             lv[pair] = strat.levels(d, s)
+            if pair == btc_pair:
+                btc_daily = d
         except Exception as e:  # noqa: BLE001
             log.error("diário %s: %s", pair, e)
     if btc_pair not in lv:
@@ -200,6 +204,11 @@ def run(cfg, market=None, notify=None, now_ms=None):
         b = st["prices"].get(btc_pair, lv[btc_pair]["close"])
         st["core"]["price_now"] = b
         st["core"]["dist_now_pct"] = (b / lv[btc_pair]["ema200"] - 1) * 100
+
+    # série diária do BTC (fechamento + EMA200) para o gráfico do painel
+    if btc_daily is not None:
+        st["btc_history"] = [{"d": r.time.strftime("%Y-%m-%d"), "c": round(float(r.close), 2), "e": round(float(r.ema), 2)}
+                             for r in btc_daily.tail(HISTORY_DAYS).itertuples()]
 
     pf.snapshot_equity()
     st["updated_at"] = now_iso()

@@ -88,6 +88,7 @@ def test_first_run_buys_core_and_is_idempotent(env):
     assert st["core"]["state"] == "comprado"
     assert any("PONTO DE COMPRA — NÚCLEO BTC" in m for m in msgs)
     assert any("Resumo do fechamento" in m for m in msgs)
+    assert len(st["btc_history"]) == 120 and set(st["btc_history"][-1]) == {"d", "c", "e"}
     n_pos = len(st["positions"])
     # rodar de novo no mesmo dia não repete compras nem resumo
     msgs2 = []

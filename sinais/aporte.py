@@ -27,6 +27,7 @@ ZONES = [
 ]
 RANK = {z[1]: i for i, z in enumerate(ZONES)}          # menor = mais barato
 CHEAP = {"muito_barato", "barato", "abaixo_media"}
+HISTORY_DAYS = 180
 
 
 def zone_of(mayer: float):
@@ -45,12 +46,17 @@ def levels(df) -> dict | None:
     mayer = close / sma
     code, name, mult = zone_of(mayer)
     top = float(df.high.max())
+    sma_series = df.close.rolling(200).mean()
+    tail = df.assign(sma=sma_series).dropna(subset=["sma"]).tail(HISTORY_DAYS)
+    history = [{"d": r.time.strftime("%Y-%m-%d"), "c": round(float(r.close), 2), "s": round(float(r.sma), 2)}
+               for r in tail.itertuples()]
     return {
         "date": df.time.iloc[-1].strftime("%Y-%m-%d"), "close": close, "sma200": sma, "mayer": mayer,
         "zone": code, "zone_name": name, "mult": mult,
         "price_below_avg": sma * 1.0, "price_cheap": sma * 0.8, "price_very_cheap": sma * 0.6,
         "price_expensive": sma * 2.4,
         "off_high_pct": (close / top - 1) * 100, "high_days": int(len(df)),
+        "history": history,          # fechamento e média de 200 dias, para o gráfico do painel
     }
 
 
@@ -117,7 +123,8 @@ def update(st: dict, lv_by_pair: dict, cfg: dict, notify, now_ms: int) -> None:
     ap = st.setdefault("aporte", {"pairs": {}, "last_reminder": None})
     for pair, lv in lv_by_pair.items():
         prev = ap["pairs"].get(pair) or {}
-        if prev.get("date") == lv["date"]:                  # mesmo diário já avisado
+        if prev.get("date") == lv["date"]:                  # mesmo diário já avisado → só atualiza os números
+            ap["pairs"][pair] = {**prev, **lv}
             continue
         changed = prev.get("zone") != lv["zone"]
         since = lv["date"] if changed else prev.get("zone_since", lv["date"])

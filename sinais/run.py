@@ -184,10 +184,12 @@ def run(cfg, market=None, notify=None, now_ms=None):
     if new_day:
         signals = pf.daily({p: v for p, v in lv.items() if p in cfg["pairs"]}, lv[btc_pair], strat, s)
         st["last_candle_day"] = btc_day
-        aporte.update(st, ap_lv, cfg, notify, now_ms)       # aviso de aporte de longo prazo (só avisa)
         for p, h in hourly.items():                     # valoriza com o preço mais recente
             if len(h):
                 st["prices"][p] = float(h.close.iloc[-1])
+
+    # ---- aviso de aporte de longo prazo (só avisa; 1 mensagem por diário fechado, idempotente) ----
+    aporte.update(st, ap_lv, cfg, notify, now_ms)
 
     # ---- radar ----
     held = {p["pair"]: p for p in st["positions"] if p["sleeve"] == "trade"}

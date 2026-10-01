@@ -30,22 +30,35 @@ log = logging.getLogger("run")
 
 class Telegram:
     def __init__(self):
-        self.token, self.chat = os.getenv("TELEGRAM_TOKEN"), os.getenv("TELEGRAM_CHAT_ID")
+        # strip(): segredos colados com espaço ou quebra de linha no fim são o erro mais comum
+        self.token = (os.getenv("TELEGRAM_TOKEN") or "").strip()
+        self.chat = (os.getenv("TELEGRAM_CHAT_ID") or "").strip()
         self.sent = []
+        if not self.token or not self.chat:
+            faltando = [n for n, v in (("TELEGRAM_TOKEN", self.token), ("TELEGRAM_CHAT_ID", self.chat)) if not v]
+            self.status = "segredo ausente: " + ", ".join(faltando)
+        else:
+            self.status = "sem mensagens nesta execução"
 
     def __call__(self, text):
         self.sent.append(text)
         log.info("telegram: %s", text.replace("\n", " | ")[:200])
         if not (self.token and self.chat):
+            log.warning("telegram não enviado — %s", self.status)
             return
         try:
             r = requests.post(f"https://api.telegram.org/bot{self.token}/sendMessage",
                               json={"chat_id": self.chat, "text": text[:4000], "disable_web_page_preview": True},
                               timeout=15)
-            if r.status_code != 200:
-                log.warning("telegram %s: %s", r.status_code, r.text[:200])
+            if r.status_code == 200:
+                self.status = "ok"
+            else:
+                desc = r.json().get("description", r.text[:150]) if r.headers.get("content-type", "").startswith("application/json") else r.text[:150]
+                self.status = f"erro {r.status_code}: {desc}"
+                log.warning("telegram %s", self.status)
         except requests.RequestException as e:
-            log.warning("telegram indisponível: %s", e)
+            self.status = f"sem conexão: {str(e)[:120]}"
+            log.warning("telegram %s", self.status)
 
 
 def pages_url():
@@ -195,6 +208,12 @@ def run(cfg, market=None, notify=None, now_ms=None):
                  "errors": market.errors}
     if new_day and cfg["telegram"].get("daily_summary", True):
         notify(summary_text(st, cfg, btc_day))
+    elif os.getenv("GITHUB_EVENT_NAME") == "workflow_dispatch" and not getattr(notify, "sent", None):
+        # rodou pelo botão e não havia nada a avisar → confirma que rodou (serve de teste do Telegram)
+        c = st.get("core") or {}
+        notify(f"✅ Análise manual concluída\nNenhum sinal novo. Núcleo BTC: {c.get('state', '—')}, "
+               f"BTC {st['prices'].get(btc_pair, 0):,.0f} ({c.get('dist_now_pct', 0):+.1f}% da EMA200).")
+    st["run"]["telegram"] = getattr(notify, "status", None)
     save_state(st)
     return st
 

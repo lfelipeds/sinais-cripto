@@ -19,6 +19,7 @@ from pathlib import Path
 import requests
 import yaml
 
+from . import aporte
 from . import estrategia as strat
 from .carteira import Portfolio, new_state, now_iso
 from .dados import Market
@@ -116,6 +117,9 @@ def summary_text(st, cfg, day):
                                                           for r in near))
     if st["risk"].get("locked"):
         lines.append(f"⛔ Trava ativa: {st['risk']['locked']}")
+    ap = aporte.summary_line(st)
+    if ap:
+        lines.append(ap)
     url = pages_url()
     if url:
         lines.append(f"Painel: {url}")
@@ -137,9 +141,18 @@ def run(cfg, market=None, notify=None, now_ms=None):
     # ---- diário ----
     lv = {}
     btc_daily = None
-    for pair in pairs:
+    ap_cfg = cfg.get("aporte") or {}
+    ap_pairs = ap_cfg.get("pairs", []) if ap_cfg.get("enabled", True) else []
+    ap_lv = {}
+    for pair in list(dict.fromkeys(pairs + ap_pairs)):
         try:
             d = strat.indicators(market.candles(pair, "1d", cfg["daily_candles"]), s)
+            if pair in ap_pairs:
+                x = aporte.levels(d)
+                if x:
+                    ap_lv[pair] = x
+            if pair not in pairs:
+                continue
             if len(d) < s["ema_trend"] + 5:
                 raise RuntimeError(f"histórico curto ({len(d)} dias)")
             lv[pair] = strat.levels(d, s)
@@ -174,6 +187,7 @@ def run(cfg, market=None, notify=None, now_ms=None):
     if new_day:
         signals = pf.daily({p: v for p, v in lv.items() if p in cfg["pairs"]}, lv[btc_pair], strat, s)
         st["last_candle_day"] = btc_day
+        aporte.update(st, ap_lv, cfg, notify, now_ms)       # aviso de aporte de longo prazo (só avisa)
         for p, h in hourly.items():                     # valoriza com o preço mais recente
             if len(h):
                 st["prices"][p] = float(h.close.iloc[-1])

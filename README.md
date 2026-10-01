@@ -59,3 +59,10 @@ Depois disso, **feche o `rodar_bot.bat` no PC**: a versão online assume.
 - A Bybit bloqueia servidores em nuvem; por isso os preços vêm da Binance (ou OKX, se precisar). Os preços diários entre as grandes corretoras são praticamente iguais.
 - O GitHub pode atrasar execuções agendadas em alguns minutos nos horários de pico.
 - Carteira simulada, sem dinheiro real. Não é recomendação de investimento.
+
+## Aviso de aporte (longo prazo)
+`sinais/aporte.py` compara o preço do BTC com a média de 200 dias (múltiplo de Mayer) e avisa no Telegram:
+- 🟢 **PREÇO VANTAJOSO** quando o preço fecha abaixo da média (sugere 1,5× o aporte do mês) ou abaixo de 0,8× a média (2×);
+- 🟠 **PREÇO CARO** acima de 2,4× a média (sugere 0,5×);
+- 📅 lembrete no dia `aporte.reminder_day` de cada mês com a faixa atual.
+Depois de um aviso, fica 30 dias em silêncio, a não ser que o preço fique ainda mais barato. É só aviso: a compra é feita por você, na sua corretora, e não entra na carteira simulada. Ajustes em `config.yaml` → `aporte`.

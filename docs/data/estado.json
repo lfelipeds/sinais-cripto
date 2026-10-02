@@ -1,10 +1,10 @@
 {
  "version": 1,
  "created_at": "2026-09-30T01:46:30+00:00",
- "updated_at": "2026-10-02T00:01:48+00:00",
+ "updated_at": "2026-10-02T00:33:03+00:00",
  "source": "binance",
  "last_candle_day": "2026-10-01",
- "last_stop_check_ms": 1790899284264,
+ "last_stop_check_ms": 1790901161105,
  "next_id": 2,
  "budgets": {
   "core": 2.2512499999999704,
@@ -135,6 +135,12 @@
   },
   {
    "ts": "2026-10-02T00:01:48+00:00",
+   "total": 1006.4836,
+   "trade": 500.0,
+   "core": 506.4836
+  },
+  {
+   "ts": "2026-10-02T00:33:03+00:00",
    "total": 1006.4836,
    "trade": 500.0,
    "core": 506.4836
@@ -284,13 +290,13 @@
   "DOGE/USDT": 0.09437
  },
  "run": {
-  "trigger": "workflow_dispatch",
-  "new_day": true,
+  "trigger": "schedule",
+  "new_day": false,
   "candle_day": "2026-10-01",
   "errors": {
    "bybit:BTC/USDT": "HTTP 403: {\n    error:The Amazon CloudFront distribution is configured to block access from your country\n}"
   },
-  "telegram": "ok"
+  "telegram": "sem mensagens nesta execução"
  },
  "btc_history": [
   {

@@ -354,7 +354,7 @@ function render() {
   $('stamp').textContent = `Carteira simulada · ${liveTxt}análise ${ago(s.updated_at)}, preços da ${src}`;
 
   const al = [];
-  if (s.risk?.locked) al.push(`Trava ativa: ${esc(s.risk.locked)}. Compras de rompimento suspensas.`);
+  if (s.risk?.locked) al.push(`Trava ativa: ${esc(s.risk.locked)}. Compras de rompimento suspensas. Para liberar: Actions → Sinais → Run workflow, marcando “Liberar a trava”.`);
   if (Date.now() - new Date(s.updated_at) > 6 * 3600e3) al.push('A análise não roda há mais de 6 horas. Confira a aba Actions no GitHub.');
   $('alert').innerHTML = al.map(t => `<p class="notice">${t}</p>`).join('');
 

@@ -4,7 +4,12 @@ on:
   schedule:
     - cron: "11 0 * * *"      # 00:11 UTC (21:11 Brasília): logo após o fechamento diário → ciclo completo
     - cron: "41 */4 * * *"    # a cada 4 horas: checa stops e atualiza preços do painel
-  workflow_dispatch: {}       # botão "Run workflow" (o painel tem um atalho "Rodar agora")
+  workflow_dispatch:          # botão "Run workflow" (o painel tem um atalho "Rodar agora")
+    inputs:
+      liberar_trava:
+        description: "Liberar a trava de queda (−15%) e recomeçar a medir a partir de agora"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -31,6 +36,7 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          LIBERAR_TRAVA: ${{ inputs.liberar_trava }}
         run: python -m sinais.run
 
       - name: Salvar estado

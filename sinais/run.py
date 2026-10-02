@@ -177,6 +177,8 @@ def run(cfg, market=None, notify=None, now_ms=None):
     # candles que FECHARAM depois da última checagem (o que estava aberto naquela hora ainda não foi visto)
     pf.check_stops({p: h[h.ts + 3_600_000 > last] for p, h in hourly.items()})
     st["last_stop_check_ms"] = now_ms
+    if os.getenv("LIBERAR_TRAVA", "").strip().lower() == "true":     # caixa marcada no "Run workflow"
+        pf.unlock()
 
     # ---- ciclo diário (só quando fecha um diário novo) ----
     btc_day = lv[btc_pair]["date"]

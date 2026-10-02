@@ -153,6 +153,21 @@ class Portfolio:
                 f"Simulado: {qty:.6g} (~{qty * pos['entry']:.2f} USDT, risco ~{qty * (pos['entry'] - pos['stop']):.2f})")
         return signals
 
+    def unlock(self):
+        """Libera a trava de queda e passa a medir a queda a partir do patrimônio atual da fatia de trading.
+        Sem trocar o pico, a trava voltaria no ciclo diário seguinte (a queda em relação ao pico antigo continua)."""
+        rk = self.st["risk"]
+        if not rk.get("locked"):
+            self.notify("🔓 Liberar trava: nenhuma trava estava ativa — nada mudou.")
+            return False
+        eq_t = self.sleeve_equity("trade")
+        self.event("trava", f"Trava liberada (era: {rk['locked']}); novo pico de referência {eq_t:.2f} USDT")
+        self.notify(f"🔓 TRAVA LIBERADA\nEra: {rk['locked']}\nCompras de rompimento voltam a valer. "
+                    f"A queda de {self.p['max_drawdown_pct']:g}% passa a contar a partir de {eq_t:.2f} USDT.")
+        rk["locked"] = None
+        rk["peak_trade"] = eq_t
+        return True
+
     def _can_open(self, pair, blocked):
         if blocked:
             return blocked

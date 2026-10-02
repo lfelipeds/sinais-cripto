@@ -52,7 +52,7 @@ Depois disso, **feche o `rodar_bot.bat` no PC**: a versão online assume.
 - **Atualizar preços** (no painel): busca a cotação atual direto no seu navegador.
 - **Rodar análise** (no painel): abre o GitHub; toque em *Run workflow* para uma análise completa agora.
 - **Mudar parâmetros**: edite `config.yaml` pelo próprio site do GitHub (ícone de lápis).
-- **Liberar a trava de −15%**: edite `docs/data/estado.json` e troque o valor de `"locked"` por `null`.
+- **Liberar a trava de −15%**: **Actions → Sinais → Run workflow**, marque **Liberar a trava** e clique em *Run workflow*. A queda passa a ser medida a partir do valor atual (não edite o `estado.json` à mão: o bot grava esse arquivo a cada execução).
 
 ## Observações
 

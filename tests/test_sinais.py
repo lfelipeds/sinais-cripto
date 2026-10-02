@@ -184,6 +184,24 @@ def test_daily_loss_blocks_new_entries(env):
     assert not st["risk"]["locked"] and st["risk"]["day"]["start"] == pytest.approx(500)
 
 
+def test_unlock_from_run_workflow(env, monkeypatch):
+    now = int(time.time() * 1000)
+    msgs = []
+    runmod.run(env, market(Fake(now, {"BTC/USDT": 0.004})), msgs.append, now)
+    saved = json.loads(runmod.STATE.read_text(encoding="utf-8"))
+    saved["risk"].update(locked="queda de 16.0% do pico", peak_trade=10_000.0)
+    runmod.STATE.write_text(json.dumps(saved), encoding="utf-8")
+    monkeypatch.setenv("LIBERAR_TRAVA", "true")
+    later = now + DAY                                                   # inclui um ciclo diário depois de liberar
+    msgs = []
+    st = runmod.run(env, market(Fake(later, {"BTC/USDT": 0.004})), msgs.append, later)
+    assert st["risk"]["locked"] is None and st["risk"]["peak_trade"] < 10_000
+    assert any("TRAVA LIBERADA" in m for m in msgs) and not any("TRAVA ACIONADA" in m for m in msgs)
+    msgs = []
+    runmod.run(env, market(Fake(later, {"BTC/USDT": 0.004})), msgs.append, later + 60_000)
+    assert any("nenhuma trava estava ativa" in m for m in msgs)
+
+
 def test_rules_match_backtest_definition():
     import pandas as pd
     s = {"breakout_days": 20, "exit_days": 10, "ema_trend": 200, "atr_period": 14, "stop_atr_mult": 2.0}

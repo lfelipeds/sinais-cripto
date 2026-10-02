@@ -174,7 +174,8 @@ def run(cfg, market=None, notify=None, now_ms=None):
             log.warning("horário %s: %s", pair, e)
     for pair, v in lv.items():                          # sem preço horário → usa o fechamento diário
         st["prices"].setdefault(pair, v["close"])
-    pf.check_stops({p: h[h.ts >= last] for p, h in hourly.items()})
+    # candles que FECHARAM depois da última checagem (o que estava aberto naquela hora ainda não foi visto)
+    pf.check_stops({p: h[h.ts + 3_600_000 > last] for p, h in hourly.items()})
     st["last_stop_check_ms"] = now_ms
 
     # ---- ciclo diário (só quando fecha um diário novo) ----

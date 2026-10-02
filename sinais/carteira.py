@@ -78,7 +78,7 @@ class Portfolio:
             if df is None or not len(df):
                 continue
             opened_ms = int(datetime.fromisoformat(pos["opened_at"]).timestamp() * 1000)
-            df = df[df.ts >= opened_ms]
+            df = df[df.ts + 3_600_000 > opened_ms]          # inclui a hora em que a posição abriu
             hit = df[df.low <= pos["stop"]]
             if len(hit):
                 row = hit.iloc[0]
@@ -109,16 +109,17 @@ class Portfolio:
         eq_t = self.sleeve_equity("trade", prices)
         rk = self.st["risk"]
         today = when[:10]
-        if not rk["day"] or rk["day"]["date"] != today:
-            rk["day"] = {"date": today, "start": eq_t}
+        # perda do dia = comparação com o patrimônio do ciclo diário anterior (inclui stops do meio do dia)
+        start = rk["day"]["start"] if rk.get("day") and rk["day"].get("start") else eq_t
+        daily_loss = (eq_t - start) / start * 100
+        rk["day"] = {"date": today, "start": eq_t}
         rk["peak_trade"] = max(rk["peak_trade"], eq_t)
         dd = (rk["peak_trade"] - eq_t) / rk["peak_trade"] * 100
         if dd >= self.p["max_drawdown_pct"] and not rk["locked"]:
             rk["locked"] = f"queda de {dd:.1f}% do pico na fatia de trading em {today}"
             self.event("trava", rk["locked"])
             self.notify(f"⛔ TRAVA ACIONADA\n{rk['locked']}\nNovas compras de rompimento suspensas até você liberar.")
-        daily_loss = (eq_t - rk["day"]["start"]) / rk["day"]["start"] * 100
-        blocked = rk["locked"] or (f"perda de {daily_loss:.1f}% hoje" if daily_loss <= -self.p["max_daily_loss_pct"] else None)
+        blocked = rk["locked"] or (f"perda de {-daily_loss:.1f}% hoje" if daily_loss <= -self.p["max_daily_loss_pct"] else None)
 
         # 4) entradas de rompimento (ordem da lista do config)
         signals = []

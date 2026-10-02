@@ -13,9 +13,9 @@ pairs:            # moedas acompanhadas (contra USDT)
   - AVAX/USDT
   - DOGE/USDT
 
-# Fontes de preço, na ordem de preferência. Se uma falhar (ex.: bloqueio da Bybit a servidores
-# em nuvem), usa a próxima. Os preços diários das grandes corretoras são praticamente iguais.
-data_sources: [bybit, binance, okx]
+# Fontes de preço, na ordem de preferência. Se uma falhar, usa a próxima. Os preços diários das
+# grandes corretoras são praticamente iguais. (bybit também existe, mas bloqueia os servidores do GitHub.)
+data_sources: [binance, okx]
 daily_candles: 900          # histórico para a EMA200 bater com o backtest
 
 # ---------------- Estratégia v2 (escolhida no backtest de carteira de 29/09/2026) ----------------

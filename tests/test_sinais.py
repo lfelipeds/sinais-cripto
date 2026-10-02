@@ -3,6 +3,7 @@ import json
 import sys
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -148,6 +149,39 @@ def test_drawdown_lock(env):
     btc = {"close": 100, "ema200": 90, "above_ema": True, "dist_ema_pct": 11, "date": "2026-01-01"}
     pf.daily({}, btc, estrategia, cfg["strategy"])
     assert st["risk"]["locked"] and any("TRAVA" in m for m in msgs)
+
+
+def test_stop_checks_hour_open_during_previous_run(env, monkeypatch):
+    """A hora que estava em curso na execução anterior também precisa ser checada na seguinte."""
+    now = int(time.time() * 1000)
+    monkeypatch.setattr(estrategia, "breakout", lambda lv, b, s: {"price": lv["close"], "stop": lv["close"] * 0.9,
+                                                                  "reason": "teste"})
+    monkeypatch.setattr(estrategia, "exit_rule", lambda lv, s: None)
+    st = runmod.run(env, market(Fake(now, {"BTC/USDT": 0.004})), [].append, now)
+    target = [p for p in st["positions"] if p["sleeve"] == "trade"][0]
+    later = now + 4 * HOUR
+    fake = Fake(later, {"BTC/USDT": 0.004})
+    rows = fake(target["pair"], "1h", 50)
+    gap = next(r for r in rows if r[0] == (now // HOUR) * HOUR)        # hora em curso na 1ª execução
+    gap[3] = target["stop"] * 0.95
+    fake.hour_override[target["pair"]] = rows
+    st = runmod.run(env, market(fake), [].append, later)
+    closed = [c for c in st["closed"] if c["id"] == target["id"]]
+    assert closed and closed[0]["exit_reason"] == "stop inicial"
+
+
+def test_daily_loss_blocks_new_entries(env):
+    st = carteira.new_state(env)
+    msgs = []
+    pf = carteira.Portfolio(st, env, msgs.append)
+    st["risk"]["day"] = {"date": "2026-01-01", "start": 520.0}       # no ciclo anterior a fatia valia 520
+    st["risk"]["peak_trade"] = 520.0                                  # hoje 500: −3,8% no dia, longe da trava de −15%
+    fake = SimpleNamespace(breakout=lambda lv, b, s: {"price": lv["close"], "stop": lv["close"] * 0.9, "reason": "teste"},
+                           exit_rule=lambda lv, s: None, core_state=lambda b: "fora")
+    btc = {"close": 100, "ema200": 90, "above_ema": True, "dist_ema_pct": 11, "date": "2026-01-02"}
+    pf.daily({"ETH/USDT": {"close": 100.0}}, btc, fake, env["strategy"])
+    assert not pf.positions("trade") and any("perda de 3.8% hoje" in m for m in msgs)
+    assert not st["risk"]["locked"] and st["risk"]["day"]["start"] == pytest.approx(500)
 
 
 def test_rules_match_backtest_definition():

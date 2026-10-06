@@ -1,10 +1,10 @@
 {
  "version": 1,
  "created_at": "2026-09-30T01:46:30+00:00",
- "updated_at": "2026-10-06T04:50:20+00:00",
+ "updated_at": "2026-10-06T08:51:55+00:00",
  "source": "binance",
  "last_candle_day": "2026-10-05",
- "last_stop_check_ms": 1791262206579,
+ "last_stop_check_ms": 1791276705850,
  "next_id": 3,
  "budgets": {
   "core": 2.2512499999999704,
@@ -335,6 +335,12 @@
    "total": 1009.8895,
    "trade": 499.6265,
    "core": 510.2631
+  },
+  {
+   "ts": "2026-10-06T08:51:55+00:00",
+   "total": 1010.6948,
+   "trade": 500.2016,
+   "core": 510.4931
   }
  ],
  "risk": {
@@ -353,20 +359,20 @@
   "dist_pct": 14.383844549050394,
   "since": "2026-08-20",
   "candle_day": "2026-10-05",
-  "price_now": 85516.27,
-  "dist_now_pct": 14.049629350990923
+  "price_now": 85555.0,
+  "dist_now_pct": 14.101282003109205
  },
  "radar": [
   {
    "pair": "BTC/USDT",
    "close": 85766.87,
-   "price": 85516.27,
+   "price": 85555.0,
    "max_20d": 87395.67,
    "min_10d": 82563.0,
    "ema200": 74981.62903872426,
    "above_ema": true,
-   "dist_breakout_pct": 2.197710447380352,
-   "dist_exit_pct": -3.453459791920299,
+   "dist_breakout_pct": 2.1514464379638776,
+   "dist_exit_pct": -3.497165566010174,
    "status": "aguardando",
    "ret_7d_pct": 2.7148020700835884,
    "signal_today": false
@@ -374,13 +380,13 @@
   {
    "pair": "ETH/USDT",
    "close": 2709.98,
-   "price": 2699.32,
+   "price": 2707.69,
    "max_20d": 2807.34,
    "min_10d": 2635.69,
    "ema200": 2289.355796399252,
    "above_ema": true,
-   "dist_breakout_pct": 4.001748588533416,
-   "dist_exit_pct": -2.3572603470503717,
+   "dist_breakout_pct": 3.6802588184024154,
+   "dist_exit_pct": -2.6590931753635028,
    "status": "aguardando",
    "ret_7d_pct": 0.791085687932136,
    "signal_today": false
@@ -388,13 +394,13 @@
   {
    "pair": "SOL/USDT",
    "close": 120.78,
-   "price": 120.03,
+   "price": 120.21,
    "max_20d": 124.95,
    "min_10d": 115.86,
    "ema200": 96.35089019781364,
    "above_ema": true,
-   "dist_breakout_pct": 4.098975256185944,
-   "dist_exit_pct": -3.4741314671332235,
+   "dist_breakout_pct": 3.943099575742459,
+   "dist_exit_pct": -3.6186673321687013,
    "status": "aguardando",
    "ret_7d_pct": 1.5897047691143085,
    "signal_today": false
@@ -402,13 +408,13 @@
   {
    "pair": "XRP/USDT",
    "close": 1.5077,
-   "price": 1.4981,
+   "price": 1.5002,
    "max_20d": 1.6581,
    "min_10d": 1.4458,
    "ema200": 1.3777049988624561,
    "above_ema": true,
-   "dist_breakout_pct": 10.680194913557163,
-   "dist_exit_pct": -3.491088712369006,
+   "dist_breakout_pct": 10.525263298226895,
+   "dist_exit_pct": -3.6261831755765916,
    "status": "aguardando",
    "ret_7d_pct": 0.7282202030999496,
    "signal_today": false
@@ -416,13 +422,13 @@
   {
    "pair": "ADA/USDT",
    "close": 0.2704,
-   "price": 0.266,
+   "price": 0.2734,
    "max_20d": 0.2685,
    "min_10d": 0.2369,
    "ema200": 0.24056420346559512,
    "above_ema": true,
-   "dist_breakout_pct": 0.9398496240601517,
-   "dist_exit_pct": -10.93984962406016,
+   "dist_breakout_pct": -1.7922457937088354,
+   "dist_exit_pct": -13.350402340892453,
    "status": "em posição",
    "ret_7d_pct": 9.340881520420542,
    "signal_today": false
@@ -430,13 +436,13 @@
   {
    "pair": "LINK/USDT",
    "close": 13.854,
-   "price": 13.77,
+   "price": 13.941,
    "max_20d": 15.777,
    "min_10d": 13.152,
    "ema200": 10.663776196609652,
    "above_ema": true,
-   "dist_breakout_pct": 14.575163398692803,
-   "dist_exit_pct": -4.488017429193903,
+   "dist_breakout_pct": 13.169786959328578,
+   "dist_exit_pct": -5.659565310953319,
    "status": "aguardando",
    "ret_7d_pct": -10.341703339373554,
    "signal_today": false
@@ -444,13 +450,13 @@
   {
    "pair": "AVAX/USDT",
    "close": 11.129,
-   "price": 11.191,
+   "price": 11.341,
    "max_20d": 12.008,
    "min_10d": 10.082,
    "ema200": 8.948671146027383,
    "above_ema": true,
-   "dist_breakout_pct": 7.300509337860772,
-   "dist_exit_pct": -9.909748905370385,
+   "dist_breakout_pct": 5.881315580636626,
+   "dist_exit_pct": -11.101313817123703,
    "status": "aguardando",
    "ret_7d_pct": 4.832328560663157,
    "signal_today": false
@@ -458,27 +464,27 @@
   {
    "pair": "DOGE/USDT",
    "close": 0.09542,
-   "price": 0.09459,
+   "price": 0.09468,
    "max_20d": 0.10589,
    "min_10d": 0.09031,
    "ema200": 0.09331363989870199,
    "above_ema": true,
-   "dist_breakout_pct": 11.946294534305956,
-   "dist_exit_pct": -4.524791204144196,
+   "dist_breakout_pct": 11.839881706801858,
+   "dist_exit_pct": -4.615547106041406,
    "status": "aguardando",
    "ret_7d_pct": 1.5538527032779914,
    "signal_today": false
   }
  ],
  "prices": {
-  "BTC/USDT": 85516.27,
-  "ETH/USDT": 2699.32,
-  "SOL/USDT": 120.03,
-  "XRP/USDT": 1.4981,
-  "ADA/USDT": 0.266,
-  "LINK/USDT": 13.77,
-  "AVAX/USDT": 11.191,
-  "DOGE/USDT": 0.09459
+  "BTC/USDT": 85555.0,
+  "ETH/USDT": 2707.69,
+  "SOL/USDT": 120.21,
+  "XRP/USDT": 1.5002,
+  "ADA/USDT": 0.2734,
+  "LINK/USDT": 13.941,
+  "AVAX/USDT": 11.341,
+  "DOGE/USDT": 0.09468
  },
  "run": {
   "trigger": "schedule",

@@ -1,10 +1,10 @@
 {
  "version": 1,
  "created_at": "2026-09-30T01:46:30+00:00",
- "updated_at": "2026-10-10T00:37:08+00:00",
+ "updated_at": "2026-10-10T00:59:15+00:00",
  "source": "binance",
  "last_candle_day": "2026-10-09",
- "last_stop_check_ms": 1791592614329,
+ "last_stop_check_ms": 1791593945779,
  "next_id": 3,
  "budgets": {
   "core": 2.2512499999999704,
@@ -503,6 +503,12 @@
    "total": 990.5908,
    "trade": 497.4407,
    "core": 493.1501
+  },
+  {
+   "ts": "2026-10-10T00:59:15+00:00",
+   "total": 990.5908,
+   "trade": 497.4407,
+   "core": 493.1501
   }
  ],
  "risk": {
@@ -650,10 +656,10 @@
  },
  "run": {
   "trigger": "schedule",
-  "new_day": true,
+  "new_day": false,
   "candle_day": "2026-10-09",
   "errors": {},
-  "telegram": "ok"
+  "telegram": "sem mensagens nesta execução"
  },
  "btc_history": [
   {

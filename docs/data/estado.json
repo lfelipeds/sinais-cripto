@@ -1,10 +1,10 @@
 {
  "version": 1,
  "created_at": "2026-09-30T01:46:30+00:00",
- "updated_at": "2026-10-26T00:59:30+00:00",
+ "updated_at": "2026-10-26T01:24:51+00:00",
  "source": "binance",
  "last_candle_day": "2026-10-25",
- "last_stop_check_ms": 1792976357586,
+ "last_stop_check_ms": 1792977882271,
  "next_id": 3,
  "budgets": {
   "core": 2.2512499999999704,
@@ -1175,6 +1175,12 @@
    "total": 975.8496,
    "trade": 497.4407,
    "core": 478.4089
+  },
+  {
+   "ts": "2026-10-26T01:24:51+00:00",
+   "total": 975.9322,
+   "trade": 497.4407,
+   "core": 478.4915
   }
  ],
  "risk": {
@@ -1193,20 +1199,20 @@
   "dist_pct": 5.039807925938855,
   "since": "2026-08-20",
   "candle_day": "2026-10-25",
-  "price_now": 80154.09,
-  "dist_now_pct": 5.039807925938855
+  "price_now": 80168.0,
+  "dist_now_pct": 5.058036611814387
  },
  "radar": [
   {
    "pair": "BTC/USDT",
    "close": 80154.09,
-   "price": 80154.09,
+   "price": 80168.0,
    "max_20d": 86999.11,
    "min_10d": 79220.74,
    "ema200": 76308.2983324901,
    "above_ema": true,
-   "dist_breakout_pct": 8.539826227208124,
-   "dist_exit_pct": -1.1644446340791759,
+   "dist_breakout_pct": 8.520993413830947,
+   "dist_exit_pct": -1.1815936533280058,
    "status": "aguardando",
    "ret_7d_pct": -2.3891933362560347,
    "signal_today": false
@@ -1214,13 +1220,13 @@
   {
    "pair": "ETH/USDT",
    "close": 2329.87,
-   "price": 2329.87,
+   "price": 2330.0,
    "max_20d": 2738.0,
    "min_10d": 2282.46,
    "ema200": 2318.84642436123,
    "above_ema": true,
-   "dist_breakout_pct": 17.517286372201024,
-   "dist_exit_pct": -2.0348774824346383,
+   "dist_breakout_pct": 17.5107296137339,
+   "dist_exit_pct": -2.040343347639484,
    "status": "aguardando",
    "ret_7d_pct": -3.337330052980736,
    "signal_today": false
@@ -1228,13 +1234,13 @@
   {
    "pair": "SOL/USDT",
    "close": 101.4,
-   "price": 101.4,
+   "price": 101.53,
    "max_20d": 122.08,
    "min_10d": 98.62,
    "ema200": 98.24536400357303,
    "above_ema": true,
-   "dist_breakout_pct": 20.394477317554237,
-   "dist_exit_pct": -2.7416173570019686,
+   "dist_breakout_pct": 20.24032305722445,
+   "dist_exit_pct": -2.8661479365704734,
    "status": "aguardando",
    "ret_7d_pct": -2.603016040726147,
    "signal_today": false
@@ -1270,13 +1276,13 @@
   {
    "pair": "LINK/USDT",
    "close": 11.456,
-   "price": 11.456,
+   "price": 11.458,
    "max_20d": 14.281,
    "min_10d": 11.2,
    "ema200": 10.988191667194775,
    "above_ema": true,
-   "dist_breakout_pct": 24.659567039106143,
-   "dist_exit_pct": -2.2346368715083775,
+   "dist_breakout_pct": 24.637807645313316,
+   "dist_exit_pct": -2.251701867690703,
    "status": "aguardando",
    "ret_7d_pct": -4.858400465077661,
    "signal_today": false
@@ -1284,13 +1290,13 @@
   {
    "pair": "AVAX/USDT",
    "close": 8.929,
-   "price": 8.929,
+   "price": 8.939,
    "max_20d": 11.73,
    "min_10d": 8.675,
    "ema200": 9.128221506535025,
    "above_ema": false,
-   "dist_breakout_pct": 31.36969425467577,
-   "dist_exit_pct": -2.844663456154095,
+   "dist_breakout_pct": 31.222731849200148,
+   "dist_exit_pct": -2.953350486631612,
    "status": "abaixo da EMA200",
    "ret_7d_pct": -8.673417203641186,
    "signal_today": false
@@ -1298,34 +1304,34 @@
   {
    "pair": "DOGE/USDT",
    "close": 0.07693,
-   "price": 0.07693,
+   "price": 0.07707,
    "max_20d": 0.09719,
    "min_10d": 0.07478,
    "ema200": 0.0913125267276488,
    "above_ema": false,
-   "dist_breakout_pct": 26.335629793318603,
-   "dist_exit_pct": -2.794748472637465,
+   "dist_breakout_pct": 26.1061372777994,
+   "dist_exit_pct": -2.971324769689898,
    "status": "abaixo da EMA200",
    "ret_7d_pct": -3.159617321248742,
    "signal_today": false
   }
  ],
  "prices": {
-  "BTC/USDT": 80154.09,
-  "ETH/USDT": 2329.87,
-  "SOL/USDT": 101.4,
+  "BTC/USDT": 80168.0,
+  "ETH/USDT": 2330.0,
+  "SOL/USDT": 101.53,
   "XRP/USDT": 1.2962,
   "ADA/USDT": 0.2042,
-  "LINK/USDT": 11.456,
-  "AVAX/USDT": 8.929,
-  "DOGE/USDT": 0.07693
+  "LINK/USDT": 11.458,
+  "AVAX/USDT": 8.939,
+  "DOGE/USDT": 0.07707
  },
  "run": {
   "trigger": "schedule",
-  "new_day": true,
+  "new_day": false,
   "candle_day": "2026-10-25",
   "errors": {},
-  "telegram": "ok"
+  "telegram": "sem mensagens nesta execução"
  },
  "btc_history": [
   {
